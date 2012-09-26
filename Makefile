@@ -1,11 +1,11 @@
 
-INCLUDES := -I/usr/autodesk/maya2010-x64/include -I.
+INCLUDES := -I/usr/autodesk/maya2010-x64/include -I. -I$(TOOLS)/include/jsoncpp/0.5.0
 
 DEFINES := -DLINUX -D_BOOL -DREQUIRE_IOSTREAM
 
 CFLAGS := -fPIC -Wall -Werror -Wextra
 
-LIBS   := -L/usr/autodesk/maya2010-x64/lib -lOpenMaya -lOpenMayaUI -lFoundation -lGL -lGLU
+LIBS   := -L$(TOOLS)/lib/jsoncpp/0.5.0 -L/usr/autodesk/maya2010-x64/lib -lOpenMaya -lOpenMayaUI -lFoundation -lGL -lGLU -ljsoncpp
 LFLAGS := -Wl,-Bsymbolic
 
 all:

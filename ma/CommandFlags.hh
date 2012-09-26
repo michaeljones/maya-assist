@@ -5,7 +5,7 @@
 #include <maya/MArgList.h>
 
 #include <string>
-#include <list>
+#include <vector>
 
 namespace ma {
 
@@ -13,17 +13,17 @@ class CommandFlags
 {
 public:
 
-    CommandFlags( const char* name, const char* description );
+    CommandFlags( const char* name, const char* arguments, const char* description );
 
     operator MSyntax();
 
     bool handle( const MArgList& args );
 
     void addFlag(
-            const char* shortName,
-            const char* longName,
-            const char* category,
-            const char* description
+            const std::string& shortName,
+            const std::string& longName,
+            const std::string& category,
+            const std::string& description
             );
 
     MStatus setObjectType( MSyntax::MObjectFormat objectFormat, unsigned int min, unsigned int max )
@@ -35,7 +35,12 @@ private:
 
     struct Flag
     {
-        Flag( const char* s, const char* l, const char* c, const char* d )
+        Flag(
+           const std::string& s,
+           const std::string& l,
+           const std::string& c,
+           const std::string& d
+           )
          : shortName( s ), longName( l ), category( c ), description( d ) {}
 
         std::string shortName;
@@ -47,12 +52,13 @@ private:
 private:
 
     std::string m_name;
+    std::string m_arguments;
     std::string m_description;
 
     MSyntax m_syntax;
     MSyntax m_noArgsSyntax;
 
-    std::list< Flag > m_flags;
+    std::vector< Flag > m_flags;
 
 };
 

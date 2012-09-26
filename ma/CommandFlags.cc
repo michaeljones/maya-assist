@@ -4,24 +4,30 @@
 #include <maya/MPxCommand.h>
 #include <maya/MArgParser.h>
 
+#include <json/json.h>
+
+#include <sstream>
+#include <list>
+
 namespace ma {
     
-CommandFlags::CommandFlags( const char* name, const char* description )
+CommandFlags::CommandFlags( const char* name, const char* arguments, const char* description )
  : m_name( name ),
+   m_arguments( arguments ),
    m_description( description ),
    m_syntax()
 {
     const char* kHelp = "Help";
     addFlag(
-            "-h",
-            "-help",
+            "h",
+            "help",
             kHelp,
-            "Returns the help"
+            "Shows the help"
            );
 
     addFlag(
-            "-hj",
-            "-helpJson",
+            "hj",
+            "helpJson",
             kHelp,
             "Returns the help in a json structure"
            );
@@ -39,12 +45,92 @@ bool CommandFlags::handle( const MArgList& args )
 
     if ( argParser.isFlagSet( "-h" ) || argParser.isFlagSet( "-help" ) )
     {
-        MPxCommand::setResult( "This is the help string" );
+        std::stringstream output;
+
+        output << "//" << std::endl;
+        output << "//   " << m_name << m_arguments << std::endl;
+        output << "//" << std::endl;
+        output << "//   " << m_description << std::endl;
+        output << "//" << std::endl;
+
+        std::list< std::string > categories;
+
+        for ( size_t i=0; i<m_flags.size(); ++i )
+        {
+            if ( std::find( categories.begin(), categories.end(), m_flags[i].category ) == categories.end() )
+            {
+                categories.push_back( m_flags[ i ].category );
+            }
+        }
+
+        std::list< std::string >::iterator categoryIt = categories.begin();
+        std::list< std::string >::iterator categoryEnd = categories.end();
+
+        for ( ; categoryIt != categoryEnd; ++categoryIt )
+        {
+            output << "//   " << *categoryIt << ":" << std::endl;
+            output << "//" << std::endl;
+            for ( size_t i=0; i<m_flags.size(); ++i )
+            {
+                Flag& flag = m_flags[ i ];
+                if ( flag.category == *categoryIt )
+                {
+                    output << "//     -" << flag.shortName << "/-" << flag.longName << std::endl;
+                    output << "//       " << flag.description << std::endl;
+                    output << "//" << std::endl;
+                }
+            }
+        }
+
+        MPxCommand::displayInfo( output.str().c_str() );
         return true;
     }
     else if ( argParser.isFlagSet( "-hj" ) || argParser.isFlagSet( "-helpJson" ) )
     {
-        MPxCommand::setResult( "This is the json help string" );
+        Json::Value root;
+        root[ "name" ] = m_name;
+        root[ "description" ] = m_description;
+
+        Json::Value& flags = root[ "flags" ];
+
+        std::list< std::string > categories;
+
+        for ( size_t i=0; i<m_flags.size(); ++i )
+        {
+            if ( std::find( categories.begin(), categories.end(), m_flags[i].category ) == categories.end() )
+            {
+                categories.push_back( m_flags[ i ].category );
+            }
+        }
+
+        std::list< std::string >::iterator categoryIt = categories.begin();
+        std::list< std::string >::iterator categoryEnd = categories.end();
+
+        for ( ; categoryIt != categoryEnd; ++categoryIt )
+        {
+            Json::Value& category = flags[ *categoryIt ];
+
+            for ( size_t i=0; i<m_flags.size(); ++i )
+            {
+                Flag& flag = m_flags[ i ];
+                if ( flag.category == *categoryIt )
+                {
+                    Json::Value jsonFlag;
+
+                    jsonFlag[ "shortname" ] = flag.shortName;
+                    jsonFlag[ "longname" ] = flag.longName;
+                    jsonFlag[ "description" ] = flag.description;
+
+                    category.append( jsonFlag );
+                }
+            }
+        }
+
+        std::stringstream stream;
+        stream << root;
+
+        MPxCommand::setResult( stream.str().c_str() );
+
         return true;
     }
 
@@ -52,10 +138,10 @@ bool CommandFlags::handle( const MArgList& args )
 }
 
 void CommandFlags::addFlag(
-        const char* shortName,
-        const char* longName,
-        const char* category,
-        const char* description
+        const std::string& shortName,
+        const std::string& longName,
+        const std::string& category,
+        const std::string& description
         )
 {
     m_flags.push_back( 
@@ -68,16 +154,15 @@ void CommandFlags::addFlag(
             );
 
     MStatus status = m_syntax.addFlag(
-            shortName,
-            longName
+            std::string( "-" + shortName ).c_str(),
+            std::string( "-" + longName ).c_str()
             );
 
     status = m_noArgsSyntax.addFlag(
-            shortName,
-            longName
+            shortName.c_str(),
+            longName.c_str()
             );
 }
-
 
 }
 

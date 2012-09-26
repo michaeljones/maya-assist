@@ -6,6 +6,7 @@
 
 ma::CommandFlags ExampleCmd::s_commandFlags(
         "exampleCommand",
+        "",
         "This is a long description of what this command does. It can"
         "span multiple lines if desired."
         );
@@ -20,8 +21,8 @@ MSyntax ExampleCmd::syntaxCreator()
     const char* kGeneral = "General";
 
     s_commandFlags.addFlag(
-            "-l",
-            "-long",
+            "l",
+            "long",
             kGeneral,
             "description"
             );
