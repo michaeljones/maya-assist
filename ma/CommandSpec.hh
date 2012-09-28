@@ -15,7 +15,7 @@ public:
 
     CommandSpec( const char* name, const char* arguments, const char* description );
 
-    operator MSyntax();
+    MSyntax syntax();
 
     bool handle( const MArgList& args );
 

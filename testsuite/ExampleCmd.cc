@@ -29,7 +29,7 @@ MSyntax ExampleCmd::syntaxCreator()
 
     s_commandSpec.setObjectType( MSyntax::kStringObjects, 1, 2 );
 
-    return s_commandSpec;
+    return s_commandSpec.syntax();
 }
 
 MStatus ExampleCmd::doIt( const MArgList& args )

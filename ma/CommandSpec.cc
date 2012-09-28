@@ -34,7 +34,7 @@ CommandSpec::CommandSpec( const char* name, const char* arguments, const char* d
 }
 
 
-CommandSpec::operator MSyntax()
+MSyntax CommandSpec::syntax()
 {
     return m_syntax;
 }
