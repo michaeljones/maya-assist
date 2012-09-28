@@ -1,5 +1,5 @@
-#ifndef MA_COMMANDFLAGS_HH
-#define MA_COMMANDFLAGS_HH
+#ifndef MA_COMMANDSPEC_HH
+#define MA_COMMANDSPEC_HH
 
 #include <maya/MSyntax.h>
 #include <maya/MArgList.h>
@@ -9,11 +9,11 @@
 
 namespace ma {
 
-class CommandFlags
+class CommandSpec
 {
 public:
 
-    CommandFlags( const char* name, const char* arguments, const char* description );
+    CommandSpec( const char* name, const char* arguments, const char* description );
 
     operator MSyntax();
 
@@ -65,5 +65,5 @@ private:
 
 }
 
-#endif // MA_COMMANDFLAGS_HH
+#endif // MA_COMMANDSPEC_HH
 

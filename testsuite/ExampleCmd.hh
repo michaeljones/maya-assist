@@ -1,5 +1,5 @@
 
-#include <ma/CommandFlags.hh>
+#include <ma/CommandSpec.hh>
 
 #include <maya/MPxCommand.h>
 
@@ -19,7 +19,7 @@ public:
 
 private:
 
-    static ma::CommandFlags s_commandFlags;
+    static ma::CommandSpec s_commandSpec;
 
 };
 

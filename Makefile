@@ -11,8 +11,8 @@ LFLAGS := -Wl,-Bsymbolic
 all:
 	mkdir -p obj/ma plugin lib
 
-	g++ -c ma/CommandFlags.cc $(CFLAGS) $(INCLUDES) $(DEFINES) -o obj/ma/CommandFlags.o
-	g++ obj/ma/CommandFlags.o $(LFLAGS) $(LIBS) -shared -o lib/libma.so
+	g++ -c ma/CommandSpec.cc $(CFLAGS) $(INCLUDES) $(DEFINES) -o obj/ma/CommandSpec.o
+	g++ obj/ma/CommandSpec.o $(LFLAGS) $(LIBS) -shared -o lib/libma.so
 
 	g++ -c testsuite/ExampleCmd.cc $(CFLAGS) $(INCLUDES) $(DEFINES) -o obj/ExampleCmd.o
 	

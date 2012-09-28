@@ -4,7 +4,7 @@
 #include <maya/MArgDatabase.h>
 #include <maya/MArgList.h>
 
-ma::CommandFlags ExampleCmd::s_commandFlags(
+ma::CommandSpec ExampleCmd::s_commandSpec(
         "exampleCommand",
         "",
         "This is a long description of what this command does. It can"
@@ -20,21 +20,21 @@ MSyntax ExampleCmd::syntaxCreator()
 {
     const char* kGeneral = "General";
 
-    s_commandFlags.addFlag(
+    s_commandSpec.addFlag(
             "l",
             "long",
             kGeneral,
             "description"
             );
 
-    s_commandFlags.setObjectType( MSyntax::kStringObjects, 1, 2 );
+    s_commandSpec.setObjectType( MSyntax::kStringObjects, 1, 2 );
 
-    return s_commandFlags;
+    return s_commandSpec;
 }
 
 MStatus ExampleCmd::doIt( const MArgList& args )
 {
-    if ( s_commandFlags.handle( args ) )
+    if ( s_commandSpec.handle( args ) )
     {
         return MS::kSuccess;
     }

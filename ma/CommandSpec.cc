@@ -1,5 +1,5 @@
 
-#include "CommandFlags.hh"
+#include "CommandSpec.hh"
 
 #include <maya/MPxCommand.h>
 #include <maya/MArgParser.h>
@@ -11,7 +11,7 @@
 
 namespace ma {
     
-CommandFlags::CommandFlags( const char* name, const char* arguments, const char* description )
+CommandSpec::CommandSpec( const char* name, const char* arguments, const char* description )
  : m_name( name ),
    m_arguments( arguments ),
    m_description( description ),
@@ -34,12 +34,12 @@ CommandFlags::CommandFlags( const char* name, const char* arguments, const char*
 }
 
 
-CommandFlags::operator MSyntax()
+CommandSpec::operator MSyntax()
 {
     return m_syntax;
 }
 
-bool CommandFlags::handle( const MArgList& args )
+bool CommandSpec::handle( const MArgList& args )
 {
     MArgParser argParser( m_noArgsSyntax, args );
 
@@ -117,7 +117,7 @@ bool CommandFlags::handle( const MArgList& args )
     return false;
 }
 
-void CommandFlags::addFlag(
+void CommandSpec::addFlag(
         const std::string& shortName,
         const std::string& longName,
         const std::string& category,
