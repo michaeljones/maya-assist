@@ -59,6 +59,7 @@ private:
     MSyntax m_noArgsSyntax;
 
     std::vector< Flag > m_flags;
+    std::vector< std::string > m_categories;
 
 };
 

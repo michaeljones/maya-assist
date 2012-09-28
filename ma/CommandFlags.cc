@@ -53,18 +53,8 @@ bool CommandFlags::handle( const MArgList& args )
         output << "//   " << m_description << std::endl;
         output << "//" << std::endl;
 
-        std::list< std::string > categories;
-
-        for ( size_t i=0; i<m_flags.size(); ++i )
-        {
-            if ( std::find( categories.begin(), categories.end(), m_flags[i].category ) == categories.end() )
-            {
-                categories.push_back( m_flags[ i ].category );
-            }
-        }
-
-        std::list< std::string >::iterator categoryIt = categories.begin();
-        std::list< std::string >::iterator categoryEnd = categories.end();
+        std::vector< std::string >::iterator categoryIt = m_categories.begin();
+        std::vector< std::string >::iterator categoryEnd = m_categories.end();
 
         for ( ; categoryIt != categoryEnd; ++categoryIt )
         {
@@ -87,47 +77,37 @@ bool CommandFlags::handle( const MArgList& args )
     }
     else if ( argParser.isFlagSet( "-hj" ) || argParser.isFlagSet( "-helpJson" ) )
     {
-        Json::Value root;
-        root[ "name" ] = m_name;
-        root[ "description" ] = m_description;
+        Json::Value jsonRoot;
+        jsonRoot[ "name" ] = m_name;
+        jsonRoot[ "description" ] = m_description;
 
-        Json::Value& flags = root[ "flags" ];
+        Json::Value& jsonCategories = jsonRoot[ "categories" ];
 
-        std::list< std::string > categories;
-
-        for ( size_t i=0; i<m_flags.size(); ++i )
-        {
-            if ( std::find( categories.begin(), categories.end(), m_flags[i].category ) == categories.end() )
-            {
-                categories.push_back( m_flags[ i ].category );
-            }
-        }
-
-        std::list< std::string >::iterator categoryIt = categories.begin();
-        std::list< std::string >::iterator categoryEnd = categories.end();
+        std::vector< std::string >::iterator categoryIt = m_categories.begin();
+        std::vector< std::string >::iterator categoryEnd = m_categories.end();
 
         for ( ; categoryIt != categoryEnd; ++categoryIt )
         {
-            Json::Value& category = flags[ *categoryIt ];
+            jsonCategories.append( *categoryIt );
+        }
 
-            for ( size_t i=0; i<m_flags.size(); ++i )
-            {
-                Flag& flag = m_flags[ i ];
-                if ( flag.category == *categoryIt )
-                {
-                    Json::Value jsonFlag;
+        Json::Value& jsonFlags = jsonRoot[ "flags" ];
 
-                    jsonFlag[ "shortname" ] = flag.shortName;
-                    jsonFlag[ "longname" ] = flag.longName;
-                    jsonFlag[ "description" ] = flag.description;
+        for ( size_t i=0; i<m_flags.size(); ++i )
+        {
+            Flag& flag = m_flags[ i ];
+            Json::Value jsonFlag;
 
-                    category.append( jsonFlag );
-                }
-            }
+            jsonFlag[ "shortname" ] = flag.shortName;
+            jsonFlag[ "longname" ] = flag.longName;
+            jsonFlag[ "description" ] = flag.description;
+            jsonFlag[ "category" ] = flag.category;
+
+            jsonFlags.append( jsonFlag );
         }
 
         std::stringstream stream;
-        stream << root;
+        stream << jsonRoot;
 
         MPxCommand::setResult( stream.str().c_str() );
 
@@ -144,6 +124,11 @@ void CommandFlags::addFlag(
         const std::string& description
         )
 {
+    if ( std::find( m_categories.begin(), m_categories.end(), category ) == m_categories.end() )
+    {
+        m_categories.push_back( category );
+    }
+
     m_flags.push_back( 
             Flag(
                 shortName,
