@@ -24,7 +24,25 @@ MSyntax ExampleCmd::syntaxCreator()
             "l",
             "long",
             kGeneral,
-            "description"
+            "This is an int flag, I'd call it int but Maya doesn't like flag long names which are "
+            "less than 4 characters.",
+            MSyntax::kLong
+            );
+
+    s_commandSpec.addFlag(
+            "d",
+            "double",
+            kGeneral,
+            "This is a double flag",
+            MSyntax::kDouble
+            );
+
+    s_commandSpec.addFlag(
+            "s",
+            "string",
+            kGeneral,
+            "This is a string flag",
+            MSyntax::kString
             );
 
     s_commandSpec.setObjectType( MSyntax::kStringObjects, 1, 2 );

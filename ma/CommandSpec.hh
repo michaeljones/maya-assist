@@ -23,7 +23,13 @@ public:
             const std::string& shortName,
             const std::string& longName,
             const std::string& category,
-            const std::string& description
+            const std::string& description,
+            MSyntax::MArgType argType1=MSyntax::kNoArg,
+            MSyntax::MArgType argType2=MSyntax::kNoArg,
+            MSyntax::MArgType argType3=MSyntax::kNoArg,
+            MSyntax::MArgType argType4=MSyntax::kNoArg,
+            MSyntax::MArgType argType5=MSyntax::kNoArg,
+            MSyntax::MArgType argType6=MSyntax::kNoArg
             );
 
     MStatus setObjectType( MSyntax::MObjectFormat objectFormat, unsigned int min, unsigned int max )
@@ -39,14 +45,20 @@ private:
            const std::string& s,
            const std::string& l,
            const std::string& c,
-           const std::string& d
+           const std::string& d,
+           const std::vector< std::string >& a
            )
-         : shortName( s ), longName( l ), category( c ), description( d ) {}
+         : shortName( s ),
+           longName( l ),
+           category( c ),
+           description( d ),
+           arguments( a ) {}
 
         std::string shortName;
         std::string longName;
         std::string category;
         std::string description;
+        std::vector< std::string > arguments;
     };
 
 private:
