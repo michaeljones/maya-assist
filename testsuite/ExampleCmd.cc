@@ -18,12 +18,15 @@ void* ExampleCmd::creator()
 
 MSyntax ExampleCmd::syntaxCreator()
 {
+    using namespace ma::commandproperties;
+
     const char* kGeneral = "General";
 
     s_commandSpec.addFlag(
             "l",
             "long",
             kGeneral,
+            kCreate,
             "This is an int flag, I'd call it int but Maya doesn't like flag long names which are "
             "less than 4 characters.",
             MSyntax::kLong
@@ -33,6 +36,7 @@ MSyntax ExampleCmd::syntaxCreator()
             "d",
             "double",
             kGeneral,
+            kCreate | kQuery,
             "This is a double flag",
             MSyntax::kDouble
             );
@@ -41,6 +45,7 @@ MSyntax ExampleCmd::syntaxCreator()
             "s",
             "string",
             kGeneral,
+            kCreate | kQuery | kMultiUse,
             "This is a string flag",
             MSyntax::kString
             );

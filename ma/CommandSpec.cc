@@ -22,6 +22,7 @@ CommandSpec::CommandSpec( const char* name, const char* arguments, const char* d
             "h",
             "help",
             kHelp,
+            commandproperties::kCreate,
             "Shows the help"
            );
 
@@ -29,10 +30,10 @@ CommandSpec::CommandSpec( const char* name, const char* arguments, const char* d
             "hj",
             "helpJson",
             kHelp,
+            commandproperties::kCreate,
             "Returns the help in a json structure"
            );
 }
-
 
 MSyntax CommandSpec::syntax()
 {
@@ -102,7 +103,6 @@ bool CommandSpec::handle( const MArgList& args )
             jsonFlag[ "longname" ] = flag.longName;
             jsonFlag[ "description" ] = flag.description;
             jsonFlag[ "category" ] = flag.category;
-            jsonFlag[ "properties" ] = Json::Value( Json::arrayValue );
 
             Json::Value jsonArguments = Json::Value( Json::arrayValue );
 
@@ -115,6 +115,18 @@ bool CommandSpec::handle( const MArgList& args )
             }
 
             jsonFlag[ "arguments" ] = jsonArguments;
+
+            Json::Value jsonProperties = Json::Value( Json::arrayValue );
+
+            std::vector< std::string >::iterator propertyIt = flag.properties.begin();
+            std::vector< std::string >::iterator propertyEnd = flag.properties.end();
+
+            for ( ; propertyIt != propertyEnd; ++propertyIt )
+            {
+                jsonProperties.append( *propertyIt );
+            }
+
+            jsonFlag[ "properties" ] = jsonProperties;
 
             jsonFlags.append( jsonFlag );
         }
@@ -159,6 +171,7 @@ void CommandSpec::addFlag(
         const std::string& shortName,
         const std::string& longName,
         const std::string& category,
+        commandproperties::PropertyBitMask properties,
         const std::string& description,
         MSyntax::MArgType argType1,
         MSyntax::MArgType argType2,
@@ -183,21 +196,60 @@ void CommandSpec::addFlag(
         }
     }
 
+    std::vector< std::string > propertyNames;
+    if ( properties & commandproperties::kCreate )
+    {
+        propertyNames.push_back( "create" );
+    }
+    if ( properties & commandproperties::kQuery )
+    {
+        propertyNames.push_back( "query" );
+    }
+    if ( properties & commandproperties::kMultiUse )
+    {
+        propertyNames.push_back( "multi-use" );
+    }
+
+
     m_flags.push_back( 
             Flag(
                 shortName,
                 longName,
                 category,
                 description,
-                arguments
+                arguments,
+                propertyNames
                 )
             );
 
+    // Register flags with actual MSyntax object.  Not quite sure why we don't need to prepend the
+    // "-" at this point, but Maya doesn't seem to like it if we do
     MStatus status = m_syntax.addFlag(
-            std::string( "-" + shortName ).c_str(),
-            std::string( "-" + longName ).c_str()
+            shortName.c_str(),
+            longName.c_str(),
+            argType1,
+            argType2,
+            argType3,
+            argType4,
+            argType5,
+            argType6
             );
 
+    if ( properties & commandproperties::kMultiUse )
+    {
+        m_syntax.makeFlagMultiUse( shortName.c_str() );
+    }
+    if ( properties & commandproperties::kQuery )
+    {
+        m_syntax.enableQuery();
+    }
+    if ( properties & commandproperties::kEdit )
+    {
+        m_syntax.enableEdit();
+    }
+
+
+    // Register flags with secondary MSyntax object that we use for -h query
     status = m_noArgsSyntax.addFlag(
             shortName.c_str(),
             longName.c_str()
