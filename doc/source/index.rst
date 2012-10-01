@@ -9,14 +9,5 @@ Maya Assist
 Example Command Documentation
 -----------------------------
 
-.. .. ma-command-format:: exampleCommand
-
 .. ma-command-flags:: exampleCommand
-
-.. .. list-table::
-
-   * - A b c
-     - D e f
-   * - H i j
-     - K l m
 

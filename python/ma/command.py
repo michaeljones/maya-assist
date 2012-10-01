@@ -48,10 +48,11 @@ class MayaCommand(object):
 
 class MayaSession(object):
 
-    def __init__(self, mayapy_path):
+    def __init__(self, mayapy_path, plugins):
         self.initialised = False
         self.maya_process = False
         self.mayapy_path = mayapy_path
+        self.plugins = plugins
 
     def close(self):
 
@@ -84,12 +85,18 @@ class MayaSession(object):
                         [self.mayapy_path, "-c", "from ma import session; session.run()" ],
                         )
 
-                self.initialised = True
-
             except Exception, e:
-                sys.stderr.write("Failed to initiaise Maya standalone in Python session")
+                sys.stderr.write("Failed to initialise Maya standalone in Python session")
                 print e
+                return
 
+            # Don't rely on the __getattr__ functionality as it'll recurse into
+            # this function again as we've not set self.initialised yet and we
+            # don't want to until we've loaded all the plugins
+            for plugin in self.plugins:
+                MayaCommand("loadPlugin")(plugin) 
+
+            self.initialised = True
 
     def __getattr__(self, name):
 

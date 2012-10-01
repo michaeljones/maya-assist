@@ -26,7 +26,6 @@ class CommandFlags(RequiresMaya):
 
         command_name = self.arguments[0]
 
-        self.maya_session.loadPlugin("examplePlugin")
         command = getattr(self.maya_session, command_name)
 
         json_string = command(helpJson=True)
@@ -152,7 +151,10 @@ class MayaSessionContainer(object):
 
     def setup(self, app):
 
-        self.maya_session = MayaSession(app.config.ma_mayapy_path)
+        self.maya_session = MayaSession(
+                app.config.ma_mayapy_path,
+                app.config.ma_plugins
+                )
 
     def close(self, app, exception):
 
@@ -166,8 +168,9 @@ def setup(app):
             'ma-command-flags',
             DirectiveContainer(CommandFlags, session_container)
             )
-    
+
     app.add_config_value("ma_mayapy_path", "", "env")
+    app.add_config_value("ma_plugins", [], "env")
 
     app.connect("builder-inited", session_container.setup)
     app.connect("build-finished", session_container.close)

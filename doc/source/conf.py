@@ -28,6 +28,7 @@ sys.path.insert(0, os.path.abspath('../../python'))
 extensions = [ "ma.sphinx" ]
 
 ma_mayapy_path = "/usr/autodesk/maya2010-x64/bin/mayapy"
+ma_plugins = ["examplePlugin"]
 
 # Add any paths that contain templates here, relative to this directory.
 templates_path = ['_templates']
