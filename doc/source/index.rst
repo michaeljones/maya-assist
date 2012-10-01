@@ -9,5 +9,7 @@ Maya Assist
 Example Command Documentation
 -----------------------------
 
+.. ma-command-format:: exampleCommand
+
 .. ma-command-flags:: exampleCommand
 

@@ -6,8 +6,8 @@
 
 ma::CommandSpec ExampleCmd::s_commandSpec(
         "exampleCommand",
-        "",
-        "This is a long description of what this command does. It can"
+        "[<example object>]",
+        "This is a long description of what this command does. It can "
         "span multiple lines if desired."
         );
 

@@ -115,6 +115,35 @@ class CommandFlags(RequiresMaya):
         tgroup += tbody
         return table
 
+
+class CommandFormat(RequiresMaya):
+
+    required_arguments = 1
+    option_spec = {}
+    has_content = False
+
+    def run(self):
+
+        command_name = self.arguments[0]
+
+        command = getattr(self.maya_session, command_name)
+
+        json_string = command(helpJson=True)
+
+        data = json.loads(json_string)
+
+        result = "   %s %s" % (data["name"], data["arguments"])
+        for entry in data["flags"]:
+            result += "\n        [-%s/-%s" % ( entry["shortname"], entry["longname"] )
+            if entry["arguments"]:
+                result += " %s" % (" ".join("<%s>" % i for i in entry["arguments"]))
+            result += "]"
+
+        block = nodes.literal_block(result, result)
+
+        messages = []
+        return [block] + messages
+
 class DirectiveContainer(object):
 
     def __init__(
@@ -167,6 +196,11 @@ def setup(app):
     app.add_directive(
             'ma-command-flags',
             DirectiveContainer(CommandFlags, session_container)
+            )
+
+    app.add_directive(
+            'ma-command-format',
+            DirectiveContainer(CommandFormat, session_container)
             )
 
     app.add_config_value("ma_mayapy_path", "", "env")

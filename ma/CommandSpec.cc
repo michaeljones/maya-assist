@@ -81,6 +81,7 @@ bool CommandSpec::handle( const MArgList& args )
         Json::Value jsonRoot;
         jsonRoot[ "name" ] = m_name;
         jsonRoot[ "description" ] = m_description;
+        jsonRoot[ "arguments" ] = m_arguments;
 
         Json::Value& jsonCategories = jsonRoot[ "categories" ];
 
