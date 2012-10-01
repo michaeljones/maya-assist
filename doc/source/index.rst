@@ -6,10 +6,15 @@
 Maya Assist
 ===========
 
-Example Command Documentation
------------------------------
+Example Command
+---------------
+
+.. ma-command-description:: exampleCommand
 
 .. ma-command-format:: exampleCommand
+
+Flags
+~~~~~
 
 .. ma-command-flags:: exampleCommand
 

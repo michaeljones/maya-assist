@@ -144,6 +144,27 @@ class CommandFormat(RequiresMaya):
         messages = []
         return [block] + messages
 
+class CommandDescription(RequiresMaya):
+
+    required_arguments = 1
+    option_spec = {}
+    has_content = False
+
+    def run(self):
+
+        command_name = self.arguments[0]
+
+        command = getattr(self.maya_session, command_name)
+
+        json_string = command(helpJson=True)
+
+        data = json.loads(json_string)
+
+        paragraph = nodes.paragraph("", "", nodes.Text(data["description"]))
+
+        messages = []
+        return [paragraph] + messages
+
 class DirectiveContainer(object):
 
     def __init__(
@@ -201,6 +222,11 @@ def setup(app):
     app.add_directive(
             'ma-command-format',
             DirectiveContainer(CommandFormat, session_container)
+            )
+
+    app.add_directive(
+            'ma-command-description',
+            DirectiveContainer(CommandDescription, session_container)
             )
 
     app.add_config_value("ma_mayapy_path", "", "env")
